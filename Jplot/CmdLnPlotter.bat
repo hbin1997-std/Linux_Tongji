@@ -1,0 +1,1 @@
+java -DSEEDRESP="%SEEDRESP%" -cp JPlotResp.jar;JEvalResp.jar com.isti.jplotresp.CmdLnPlotter "%1" "%2" "%3" "%4" "%5" "%6" "%7" "%8" "%9"

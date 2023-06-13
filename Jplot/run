@@ -1,0 +1,11 @@
+#!/bin/csh
+
+# search for the SEEDRESP env var
+set a=`env|grep SEEDRESP`
+
+if ($a == "")  then
+        #no seedresp set
+        java -jar JPlotResp.jar
+else
+        java -DSEEDRESP=$SEEDRESP -cp JPlotResp.jar
+endif

@@ -1,0 +1,1 @@
+java -DSEEDRESP="%SEEDRESP%" -jar JPlotResp.jar

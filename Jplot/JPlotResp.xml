@@ -1,0 +1,49 @@
+<RespConfig>
+<Settings>
+network = ""
+station = ""
+location = ""
+channel = ""
+minFreq = 1.0E-4
+maxFreq = 100.0
+numFreq = 100
+beginTimeYear = ""
+beginTimeJulianDay = ""
+beginTimeTime = ""
+endTimeYear = ""
+endTimeJulianDay = ""
+endTimeTime = ""
+rememberSettings = true
+multiOut = false
+filenameSelectedFlag = true
+filename = ""
+serverFile = "irisws.prop"
+startStage = ""
+endStage = ""
+verbose = true
+headers = true
+useDelay = false
+multiSvrFlag = false
+unwrapPhaseFlag = false
+totalSensitFlag = false
+showInput = false
+b62XValue = ""
+interpOutput = false
+interpInput = false
+interpTension = 1000.0
+ampPhaseSel = 2
+showPointsFlag = true
+logAmpFlag = true
+combineAmpPhaseFlag = true
+showFreqLineFlag = true
+units = 2
+frequencySpacing = 0
+responseType = 0
+outputDirectory = "/home/binh/tools"
+programFrameWidth = 1453
+programFrameHeight = 815
+programFrameXPos = 193
+programFrameYPos = 130
+useIstiFileChooserFlag = true
+</Settings>
+</RespConfig>
