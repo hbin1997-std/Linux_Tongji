@@ -1,0 +1,106 @@
+#!/bin/sh
+# Contour plot of number of signals as fucntion of dop & freq. 
+# Plot 1 sphere, use polar coordinates (radius = freq, angle = baz) 
+# make grid
+
+# Author: schimmel@ictja.csic.es
+#################################
+
+
+bbins='30'
+fbins='20'
+fmin='0.05'
+fmax='0.3'
+dopcut='0.7'
+#stnm='M.KMD13'
+month='9'
+#mmyy='SEP-2017'
+bazmin='-180'
+bazmax='180'
+
+
+
+rm -f plot1.ps tmp?.tmp tmp?.grd
+
+
+<<!
+read -p "Enter the date > " dat
+echo ${dat}
+!
+read -p "Enter the STA > " sta
+echo ${sta}
+
+mkdir ./${sta}_dop
+
+#sta=M.KMB05
+#
+#for dat in 
+#for dat in 
+for dat in  201706 201707 201708 201709 201710 201711 201712 201803 201802 201801 201804 201805
+do
+echo ${dat}
+
+
+###################################
+### use "awk" and 2-D bin the data:
+###################################
+ 
+
+awk -v dop=$dopcut '($1 < 1000 && $3 >= dop) {print $1,$2}' /home/binh/yingpan/sac_processed/Data/${dat}_m/Results_${sta}/*.dat > tmp1.txt
+
+awk -v xmin=$bazmin -v xmax=$bazmax -v xn=$bbins -v ymin=$fmin   -v ymax=$fmax   -v yn=$fbins '
+    
+    ($1 >= xmin && $1 < xmax && $2 >= ymin && $2 < ymax) {
+     xi = int(xn * ($1 - xmin) / (xmax - xmin)) ; if (xi >= xn) xi = xn - 1
+     yi = int(yn * ($2 - ymin) / (ymax - ymin)) ; if (yi >= yn) yi = yn - 1
+     h[yi,xi]++
+     n++
+    }
+
+     END {
+            xscale = (xmax - xmin) / xn
+            yscale = (ymax - ymin) / yn
+                if (n > 0)
+                    percent = 100.0 / n
+                else
+                    percent = 0.0
+                for (yi = 0; yi < yn; yi++)
+                    for (xi = 0; xi < xn; xi++)
+                        printf("%7.2f  %8.4f  %8.4f\n",
+                                xmin + xscale * (xi + 0.5),
+                                ymin + yscale * (yi + 0.5),
+                                h[yi,xi]) 
+         } ' tmp1.txt > tmp2.txt
+
+
+############################# GMT ############################
+# GMT PLOTTING
+proj='Pa5i'
+proj2='X5i/5i'
+range="${bazmin}/${bazmax}/${fmin}/${fmax}"
+range2='0/10/0/10'
+baz_grid='20'
+cmap='seis'
+outps="${stnm}_${mmyy}_DoP.ps"
+
+gmt info -C tmp2.txt > tmp3.txt
+tmax=`awk '{ print $6}' tmp3.txt`
+binc=$(echo "scale=2; ( $bazmax - $bazmin ) / $bbins" | bc)
+finc=$(echo "scale=4; ( $fmax - $fmin ) / $fbins" | bc)
+labtinc=$(echo "scale=4; 1 / 5" | bc)
+labl='Normalized DoP Signal Counts'
+echo "\n INTERVALS: BAZ=$binc dF=$finc\n"
+
+# normalize DoP by the max value: $tmax
+awk -v nm=$tmax '{ print $1,$2,$3/nm }' tmp2.txt > tmp4.txt
+
+# grid operations
+gmt gmtset MAP_GRID_PEN_PRIMARY 0.4p,white
+gmt blockmean tmp4.txt -R$range -I${binc}/${finc} -fi0x,1f,2f -C -V > block.xyz
+gmt surface block.xyz -R$range -I${binc}/${finc} -V -T0.25 -G${dat}_${sta}.grd
+
+mv ${dat}_${sta}.grd ./${sta}_dop
+rm -rf tmp*
+done
+
+
